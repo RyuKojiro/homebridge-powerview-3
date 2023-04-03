@@ -138,7 +138,7 @@ PowerViewHub.prototype.getShade = function(shadeId, refresh = false, callback) {
 		if (!err && response.statusCode == 200) {
 			var json = JSON.parse(body);
 
-			if (callback) callback(null, json.shade);
+			if (callback) callback(null, json);
 		} else {
 			if (!err)
 				err = new Error("HTTP Error " + response.statusCode);
