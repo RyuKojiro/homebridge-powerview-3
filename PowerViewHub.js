@@ -37,7 +37,7 @@ PowerViewHub.prototype.scheduleRequest = function(delay) {
 		this.queue[0] = {};
 
 		var options = {
-			url: "http://" + this.host + "/api/shades/" + queued.shadeId
+			url: "http://" + this.host + "/home/shades/" + queued.shadeId
 		}
 		
 		if (queued.data) {
@@ -78,7 +78,7 @@ PowerViewHub.prototype.scheduleRequest = function(delay) {
 // Makes a userdata API request.
 PowerViewHub.prototype.getUserData = function(callback) {
 	request.get({
-		url: "http://" + this.host + "/api/userdata"
+		url: "http://" + this.host + "/home/userdata"
 	}, function(err, response, body) {
 		if (!err && response.statusCode == 200) {
 			var json = JSON.parse(body);
@@ -96,7 +96,7 @@ PowerViewHub.prototype.getUserData = function(callback) {
 // Makes a shades API request.
 PowerViewHub.prototype.getShades = function(callback) {
 	request.get({
-		url: "http://" + this.host + "/api/shades"
+		url: "http://" + this.host + "/home/shades"
 	}, function(err, response, body) {
 		if (!err && response.statusCode == 200) {
 			var json = JSON.parse(body);
@@ -133,7 +133,7 @@ PowerViewHub.prototype.getShade = function(shadeId, refresh = false, callback) {
 	}
 
 	request.get({
-		url: "http://" + this.host + "/api/shades/" + shadeId
+		url: "http://" + this.host + "/home/shades/" + shadeId
 	}, function(err, response, body) {
 		if (!err && response.statusCode == 200) {
 			var json = JSON.parse(body);
