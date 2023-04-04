@@ -42,7 +42,7 @@ PowerViewHub.prototype.scheduleRequest = function(delay) {
 		
 		if (queued.data) {
 			options.method = 'PUT';
-			options.json = { 'shade': queued.data };
+			options.json = queued.data;
 
 			this.log("Put for", queued.shadeId, queued.data);
 		}
