@@ -6,7 +6,7 @@ let RequestIntervalMs = 100;
 let Position = {
 	BOTTOM: 1,
 	TOP: 2,
-	VANES: 3
+	VANES: 'tilt'
 }
 exports.Position = Position;
 

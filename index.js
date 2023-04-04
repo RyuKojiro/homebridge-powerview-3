@@ -258,9 +258,9 @@ PowerViewPlatform.prototype.updateShadeValues = function (shade, current) {
 		this.log("Set for", shade.id, { 'positions': shade.positions });
 		positions = {};
 
-		for (var i = 1; shade.positions['posKind' + i]; ++i) {
-			var position = shade.positions['posKind' + i];
-			var hubValue = shade.positions['position' + i];
+		for (var position in shade.positions) {
+			this.log("processing position "+ position);
+			var hubValue = shade.positions[position];
 
 			if (position == Position.BOTTOM) {
 				positions[Position.BOTTOM] = Math.round(100 * hubValue / 65535);
@@ -470,7 +470,7 @@ PowerViewPlatform.prototype.updatePosition = function (shadeId, position, refres
 					} else {
 						// set postion to 0
 						callback(null, 0);
-						this.log("Invalid position value received for %d/%d", shadeId, position);
+						this.log("Invalid position value received for %d/%s", shadeId, position);
 					}
 				}
 			}
@@ -501,13 +501,13 @@ PowerViewPlatform.prototype.jogShade = function (shadeId, callback) {
 
 // Characteristic callback for CurrentPosition.get
 PowerViewPlatform.prototype.getPosition = function (shadeId, position, callback) {
-	this.log("getPosition %d/%d", shadeId, position);
+	this.log("getPosition %d/%s", shadeId, position);
 
 	this.updatePosition(shadeId, position, this.refreshShades, function (err, value) {
 		if (!err) {
 			// If we're not refreshing by default, try again with a refresh.
 			if (!this.refreshShades && value == null) {
-				this.log("refresh %d/%d", shadeId, position);
+				this.log("refresh %d/%s", shadeId, position);
 				this.updatePosition(shadeId, position, true, callback);
 			} else {
 				callback(null, value);
