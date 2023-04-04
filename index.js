@@ -9,14 +9,16 @@ let Shade = {
 	ROLLER: 1,
 	TOP_BOTTOM: 2,
 	HORIZONTAL: 3,
-	VERTICAL: 4
+	VERTICAL: 4,
+	SHUTTER: 5
 }
 
 let ShadeTypes = {
 	ROLLER: [1, 5, 42],
 	TOP_BOTTOM: [8],
 	HORIZONTAL: [18, 23],
-	VERTICAL: [16]
+	VERTICAL: [16],
+	SHUTTER: [66]
 }
 
 let SubType = {
@@ -93,6 +95,8 @@ PowerViewPlatform.prototype.shadeType = function (shade) {
 		return Shade.HORIZONTAL;
 	if (ShadeTypes.VERTICAL.includes(shade.type))
 		return Shade.VERTICAL;
+	if (ShadeTypes.SHUTTER.includes(shade.type))
+		return Shade.SHUTTER;
 
 	this.log("*** Shade %d has unknown type %d, assuming roller ***", shade.id, shade.type);
 	return Shade.ROLLER
@@ -168,17 +172,19 @@ PowerViewPlatform.prototype.configureShadeAccessory = function (accessory) {
 	if (!service)
 		service = accessory.addService(Service.WindowCovering, accessory.displayName, SubType.BOTTOM);
 
-	service
-		.getCharacteristic(Characteristic.CurrentPosition)
-		.removeAllListeners('get')
-		.on('get', this.getPosition.bind(this, accessory.context.shadeId, Position.BOTTOM));
+	if (accessory.context.shadeType != Shade.SHUTTER) {
+		service
+			.getCharacteristic(Characteristic.CurrentPosition)
+			.removeAllListeners('get')
+			.on('get', this.getPosition.bind(this, accessory.context.shadeId, Position.BOTTOM));
 
-	service
-		.getCharacteristic(Characteristic.TargetPosition)
-		.removeAllListeners('set')
-		.on('set', this.setPosition.bind(this, accessory.context.shadeId, Position.BOTTOM));
+		service
+			.getCharacteristic(Characteristic.TargetPosition)
+			.removeAllListeners('set')
+			.on('set', this.setPosition.bind(this, accessory.context.shadeId, Position.BOTTOM));
+	}
 
-	if (accessory.context.shadeType == Shade.HORIZONTAL) {
+	if (accessory.context.shadeType == Shade.HORIZONTAL || accessory.context.shadeType == Shade.SHUTTER) {
 		service
 			.getCharacteristic(Characteristic.CurrentHorizontalTiltAngle)
 			.setProps({ minValue: 0 })
@@ -279,16 +285,19 @@ PowerViewPlatform.prototype.updateShadeValues = function (shade, current) {
 
 				this.log("Setting TargetPosition to:", positions[Position.BOTTOM]);
 
-				if (!isNaN(positions[Position.BOTTOM])) {
-					service.updateCharacteristic(Characteristic.TargetPosition, positions[Position.BOTTOM]);
-				} else {
-					this.log("Invalid position value:", positions[Position.BOTTOM]);
+				if (accessory.context.shadeType != Shade.SHUTTER) {
+					if (!isNaN(positions[Position.BOTTOM])) {
+						service.updateCharacteristic(Characteristic.TargetPosition, positions[Position.BOTTOM]);
+					} else {
+						this.log("Invalid position value:", positions[Position.BOTTOM]);
+					}
 				}
 
 				this.log("Setting PositionState to:", Characteristic.PositionState.STOPPED);
 				service.setCharacteristic(Characteristic.PositionState, Characteristic.PositionState.STOPPED);
 
-				if (accessory.context.shadeType == Shade.HORIZONTAL) {
+				if (accessory.context.shadeType == Shade.HORIZONTAL ||
+				    accessory.context.shadeType == Shade.SHUTTER) {
 					if (current) {
 						service.setCharacteristic(Characteristic.CurrentHorizontalTiltAngle, 0);
 					}
@@ -314,7 +323,7 @@ PowerViewPlatform.prototype.updateShadeValues = function (shade, current) {
 			}
 
 
-			if (position == Position.VANES && accessory.context.shadeType == Shade.HORIZONTAL) {
+			if (position === Position.VANES && (accessory.context.shadeType == Shade.HORIZONTAL || accessory.context.shadeType == Shade.SHUTTER)) {
 				positions[Position.VANES] = Math.round(90 * hubValue / 32767);
 
 				var service = accessory.getServiceByUUIDAndSubType(Service.WindowCovering, SubType.BOTTOM);
