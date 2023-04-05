@@ -37,7 +37,7 @@ PowerViewHub.prototype.scheduleRequest = function(delay) {
 		this.queue[0] = {};
 
 		var options = {
-			url: "http://" + this.host + "/home/shades/" + queued.shadeId
+			url: "http://" + this.host + "/home/shades/positions?ids=" + queued.shadeId
 		}
 		
 		if (queued.data) {
