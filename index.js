@@ -475,7 +475,7 @@ PowerViewPlatform.prototype.updatePosition = function (shadeId, position, refres
 				if (callback) {
 					if (positions && typeof positions[position] === 'number' && isFinite(positions[position])) {
 						callback(null, positions[position]);
-						this.log("updatePosition %d/%d: %d", shadeId, position, positions[position]);
+						this.log("updatePosition %d/%s: %d", shadeId, position, positions[position]);
 					} else {
 						// set postion to 0
 						callback(null, 0);
@@ -529,7 +529,7 @@ PowerViewPlatform.prototype.getPosition = function (shadeId, position, callback)
 
 // Characteristic callback for TargetPosition.set
 PowerViewPlatform.prototype.setPosition = function (shadeId, position, value, callback) {
-	this.log("setPosition %d/%d = %d", shadeId, position, value);
+	this.log("setPosition %d/%s = %d", shadeId, position, value);
 	// Check if value is a valid number
 	if (typeof value !== "number" || isNaN(value) || !isFinite(value)) {
 		callback(new Error("Invalid value: " + value));
