@@ -186,13 +186,12 @@ PowerViewHub.prototype.putShade = function(shadeId, position, value, userValue,c
 	var queued = {
 		'shadeId': shadeId,
 		'data': {
-			'positions': {
-				position: value
-			}
+			'positions': {}
 		},
 		'callbacks': [callback]
 	}
 
+	queued.data.positions[position] = value
 
 	this.queueRequest(queued);
 }
