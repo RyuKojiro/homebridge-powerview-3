@@ -324,7 +324,7 @@ PowerViewPlatform.prototype.updateShadeValues = function (shade, current) {
 
 
 			if (position === Position.VANES && (accessory.context.shadeType == Shade.HORIZONTAL || accessory.context.shadeType == Shade.SHUTTER)) {
-				positions[Position.VANES] = Math.round(90 * hubValue / 32767);
+				positions[Position.VANES] = Math.round(90 * hubValue);
 
 				var service = accessory.getServiceByUUIDAndSubType(Service.WindowCovering, SubType.BOTTOM);
 
@@ -547,7 +547,7 @@ PowerViewPlatform.prototype.setPosition = function (shadeId, position, value, ca
 			if (accessory.context.shadeType == Shade.VERTICAL) {
 				var hubValue = Math.abs(Math.round(65535 * (value - 90) / 180));
 			} else {
-				var hubValue = Math.round(32767 * value / 90);
+				var hubValue = value / 90.0;
 			}
 			break;
 	}
