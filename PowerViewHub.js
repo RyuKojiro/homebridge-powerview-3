@@ -154,10 +154,7 @@ PowerViewHub.prototype.putShade = function(shadeId, position, value, userValue,c
 	for (var queued of this.queue) {
 		if (queued.shadeId == shadeId && queued.data && queued.data.positions) {
 			// Parse out the positions data back into a list of position to value.
-			var positions = [];
-			for (var i = 1; queued.data.positions['posKind'+i]; ++i) {
-				positions[queued.data.positions['posKind'+i]] = queued.data.positions['position'+i];
-			}
+			var positions = queued.data.positions;
 
 			// Set the new position.
 			positions[position] = value;
@@ -179,13 +176,7 @@ PowerViewHub.prototype.putShade = function(shadeId, position, value, userValue,c
 			}
 
 			// Reconstruct the data again, this places it back in position order.
-			i = 1;
-			queued.data.positions = {};
-			for (var position in positions) {
-				queued.data.positions['posKind'+i] = parseInt(position);
-				queued.data.positions['position'+i] = positions[position];
-				++i;
-			}
+			queued.data.positions = positions;
 
 			queued.callbacks.push(callback);
 			return;
@@ -196,8 +187,7 @@ PowerViewHub.prototype.putShade = function(shadeId, position, value, userValue,c
 		'shadeId': shadeId,
 		'data': {
 			'positions': {
-				'posKind1': position,
-				'position1': value
+				position: value
 			}
 		},
 		'callbacks': [callback]
