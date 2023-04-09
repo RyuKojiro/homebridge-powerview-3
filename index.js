@@ -172,17 +172,20 @@ PowerViewPlatform.prototype.configureShadeAccessory = function (accessory) {
 	if (!service)
 		service = accessory.addService(Service.WindowCovering, accessory.displayName, SubType.BOTTOM);
 
-	if (accessory.context.shadeType != Shade.SHUTTER) {
-		service
-			.getCharacteristic(Characteristic.CurrentPosition)
-			.removeAllListeners('get')
-			.on('get', this.getPosition.bind(this, accessory.context.shadeId, Position.BOTTOM));
-
-		service
-			.getCharacteristic(Characteristic.TargetPosition)
-			.removeAllListeners('set')
-			.on('set', this.setPosition.bind(this, accessory.context.shadeId, Position.BOTTOM));
+	var kind = Position.BOTTOM;
+	if (accessory.context.shadeType == Shade.SHUTTER) {
+		kind = Position.VANES;
 	}
+
+	service
+		.getCharacteristic(Characteristic.CurrentPosition)
+		.removeAllListeners('get')
+		.on('get', this.getPosition.bind(this, accessory.context.shadeId, kind));
+
+	service
+		.getCharacteristic(Characteristic.TargetPosition)
+		.removeAllListeners('set')
+		.on('set', this.setPosition.bind(this, accessory.context.shadeId, kind));
 
 	if (accessory.context.shadeType == Shade.HORIZONTAL || accessory.context.shadeType == Shade.SHUTTER) {
 		service
